@@ -10,10 +10,33 @@ class ComputerArrow {
     this.height = height;
     this.body = Bodies.rectangle(x, y, this.width, this.height, options);
     this.image = loadImage("./assets/arrow.png");
+    this.isRemoved = false;
+    this.archerAngle = archerAngle;
+    this.velocity = p5.Vector.fromAngle(archerAngle);
     World.add(world, this.body);
   }
 
- display() {
+  shoot(archerAngle) {
+    this.velocity = p5.Vector.fromAngle(archerAngle + PI / 2);
+    this.velocity.mult(32);
+    Matter.Body.setVelocity(this.body, {
+      x: this.velocity.x,
+      y: this.velocity.y
+    });
+
+    Matter.Body.setStatic(this.body, false);
+  }
+
+  display() {
+    var tmpAngle;
+    if (this.body.velocity.y === 0) {
+      tmpAngle = this.archerAngle + PI / 2;
+    } else {
+      tmpAngle = Math.atan(this.body.velocity.y / this.body.velocity.x) - PI;
+    }
+
+    Matter.Body.setAngle(this.body, tmpAngle);
+
     var pos = this.body.position;
     var angle = this.body.angle;
 
